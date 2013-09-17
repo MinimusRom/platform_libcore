@@ -8,6 +8,9 @@ import /init.usb.rc
 import /init.${ro.hardware}.rc
 import /init.trace.rc
 
+# Include superuser init file
+import /init.superuser.rc
+
 on early-init
     # Set init and its forked children's oom_adj.
     write /proc/1/oom_adj -16
@@ -260,6 +263,9 @@ on post-fs-data
     #setprop vold.post_fs_data_done 1
 
 on boot
+# Run sysinit
+    start sysinit
+
 # basic network init
     ifup lo
     hostname localhost
@@ -537,3 +543,9 @@ service mdnsd /system/bin/mdnsd
     socket mdnsd stream 0660 mdnsr inet
     disabled
     oneshot
+    
+# sysinit (/system/etc/init.d)
+service sysinit /system/bin/sysinit
+    user root
+    oneshot
+    disabled
